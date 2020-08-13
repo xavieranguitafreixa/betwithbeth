@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bet With Beth Scraper</title>
+
+    <script src="/webjars/jquery/2.1.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/3.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/all.css}" href="../static/css/all.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/team.css}" href="../static/css/team.css">
+</head>
+<body>
+<nav class="navbar-wrapper" th:include="header :: header"></nav>
+<!--<div style="left: 0; border: 0 none; height: 500px; position: fixed; width: 320px; overflow: hidden; top: 100px;">-->
+<!--<iframe src="https://en.surebet.com/calculator"></iframe>-->
+<!--</div>-->
+<div class="container">
+    <h1 class="h1">
+        <span th:text="${titulo}"></span>
+        <small th:text="${subTitulo}"></small>
+    </h1>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="pull-right">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-success btn-filter" th:each="char : ${ALPHABET}" th:attr="data-target=${char}" th:text="${char}"></button>
+                    <button type="button" class="btn btn-default btn-filter" data-target="all">Todos</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="table table-filter">
+                    <tbody>
+                    <tr th:each="team, i : ${teams}" th:attr="data-status=${team.name.charAt(0)}">
+                        <td>
+                            <div class="ckbox">
+                                <input type="checkbox" th:id="'checkbox'  + i">
+                                <label th:for="'checkbox'  + i"></label>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="javascript:;" class="star">
+                                <i class="glyphicon glyphicon-star"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <div class="media">
+                                <a th:href="'./' + ${team.name}" class="pull-left">
+                                    <img th:src="${team.imageUrl}"
+                                         class="media-photo">
+                                </a>
+                                <div class="media-body">
+                                    <span class="media-meta pull-right" th:text="${team.creationDate}"></span>
+                                    <h4 class="title">
+                                        <span th:text="${team.name}"></span>
+                                        <span class="pull-right pagado" th:text="${team.country}"></span>
+                                    </h4>
+                                    <p class="summary">Ut enim ad minim veniam, quis nostrud exercitation...</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="tab" th:value="${tab}">
+<script>
+    $(function () {
+        var tab = $("#tab").val();
+        $("#" + tab).addClass("active");
+
+        $('.star').on('click', function () {
+            $(this).toggleClass('star-checked');
+        });
+
+        $('.ckbox label').on('click', function () {
+            $(this).parents('tr').toggleClass('selected');
+        });
+
+        $('.btn-filter').on('click', function () {
+            var $target = $(this).data('target');
+            if ($target != 'all') {
+                $('.table tr').css('display', 'none');
+                $('.table tr[data-status="' + $target + '"]').fadeIn('slow');
+            } else {
+                $('.table tr').css('display', 'none').fadeIn('slow');
+            }
+        });
+    });
+</script>
+</body>
+</html>

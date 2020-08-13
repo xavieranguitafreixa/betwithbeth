@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bet With Beth Scraper</title>
+
+    <script src="/webjars/jquery/2.1.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/3.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/all.css}" href="../static/css/all.css">
+</head>
+<body>
+<nav class="navbar-wrapper" th:include="header :: header"></nav>
+<!--<div style="left: 0; border: 0 none; height: 500px; position: fixed; width: 320px; overflow: hidden; top: 100px;">-->
+<!--<iframe src="https://en.surebet.com/calculator"></iframe>-->
+<!--</div>-->
+<div class="container">
+    <h1 class="h1">
+        <span th:text="${titulo}"></span>
+        <small th:text="${subTitulo}"></small>
+    </h1>
+    <div class="col-sm-6" th:each="market, i : ${markets}">
+        <div class="bs-calltoaction bs-calltoaction-success">
+            <div class="row">
+                <div class="col-md-12 cta-contents">
+                    <h4 class="h4 cta-title">
+                        <span th:text="${market.event.fullName}"></span>
+                        <i th:if="${market._sureBet != null}" class="glyphicon glyphicon-fire text-danger" th:title="'Surebet'"></i>
+                        <i th:if="${market.currentInPlay}" class="glyphicon glyphicon-play-circle text-info" th:title="'En juego'"></i>
+                    </h4>
+                    <small class="h5 center-block"
+                           th:text="${market.currentInPlay ? ('En juego ' + market.currentHomeScore + '-' + market.currentVisitorScore) : 'Sin comenzar'}"></small>
+                    <small class="center-block" th:text="'Última actualización: ' + ${market.lastUpdate}"></small>
+                    <small class="text-primary"
+                           th:text="'Índice: ' + ${#numbers.formatDecimal(market._maxBet._index,1,3,'COMMA')}"></small>
+                    <b class="text-danger" th:if="${market._sureBet != null}"
+                       th:text="'Surebet! Cuota: ' + ${#numbers.formatDecimal((1/market._sureBet._index),1,2,'COMMA')}"></b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cta-desc col-md-3 bg-success" th:each="cuota, i : ${market.cuotas}">
+                        <div class="col-md-12 cta-button">
+                            <a th:href="${cuota.url}">
+                                <img th:src="${cuota.bettingHouse.iconUrl}"
+                                     style="max-height: 64px; margin-bottom: 10px">
+                                <small th:text="${cuota.date}"></small>
+                            </a>
+                        </div>
+                        <div class="col-md-12 cta-button">
+                            <span th:class="'center-block '
+                                            + ${market._sureBet != null && market._sureBet.one == cuota.one ? 'text-danger ' : ''}
+                                            + ${market._maxBet != null && market._maxBet.one == cuota.one ? 'text-primary' : ''}
+                                            "
+                                  th:text="'1 -> ' + ${cuota.one}"></span>
+
+                            <span th:if="${market.event.sport.name() == 'FUTBOL'}"
+                                    th:class="'center-block '
+                                            + ${market._sureBet != null && market._sureBet.x == cuota.x ? 'text-danger ' : ''}
+                                            + ${market._maxBet != null && market._maxBet.x == cuota.x ? 'text-primary' : ''}
+                                            "
+                                  th:text="'X -> ' + ${cuota.x}"></span>
+
+                            <span th:class="'center-block '
+                                            + ${market._sureBet != null && market._sureBet.two == cuota.two ? 'text-danger ' : ''}
+                                            + ${market._maxBet != null && market._maxBet.two == cuota.two ? 'text-primary ' : ''}
+                                            "
+                                  th:text="'2 -> ' + ${cuota.two}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="tab" th:value="${tab}">
+<script>
+    $(function () {
+        var tab = $("#tab").val();
+        $("#" + tab).addClass("active");
+    });
+</script>
+</body>
+</html>

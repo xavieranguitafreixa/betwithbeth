@@ -1,0 +1,26 @@
+logging:
+  level:
+    com.factorialsigma.betwithbeth: INFO
+
+feign:
+  hystrix:
+    enabled: false
+
+spring:
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:file:./data/db
+
+  thymeleaf:
+    mode: LEGACYHTML5
+    cache: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+#  jpa:
+#    show-sql: true
+
+
